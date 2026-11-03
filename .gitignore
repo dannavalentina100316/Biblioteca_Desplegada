@@ -9,3 +9,4 @@ htmlcov/
 biblioteca_test.db
 *.db
 *.sqlite
+++docker info
