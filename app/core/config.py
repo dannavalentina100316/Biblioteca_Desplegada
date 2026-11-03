@@ -26,8 +26,19 @@ class Settings(BaseSettings):
     @property
     def active_database_url(self) -> str:
         if self.environment == "test" and self.test_database_url:
-            return self.test_database_url
-        return self.database_url
+            database_url = self.test_database_url
+        else:
+            database_url = self.database_url
+
+        if database_url.startswith("postgres://"):
+            return database_url.replace(
+                "postgres://", "postgresql+psycopg://", 1
+            )
+        if database_url.startswith("postgresql://"):
+            return database_url.replace(
+                "postgresql://", "postgresql+psycopg://", 1
+            )
+        return database_url
 
 
 @lru_cache

@@ -17,6 +17,20 @@ from app.scripts import crear_admin
 PASSWORD = "Biblioteca123"
 
 
+@pytest.mark.parametrize("scheme", ["postgres://", "postgresql://"])
+def test_settings_normalize_render_database_url(scheme):
+    settings = Settings(
+        database_url=f"{scheme}user:secret@localhost:5432/biblioteca",
+        secret_key="x" * 32,
+        environment="prod",
+        _env_file=None,
+    )
+
+    assert settings.active_database_url == (
+        "postgresql+psycopg://user:secret@localhost:5432/biblioteca"
+    )
+
+
 def register(client, email, nombre):
     return client.post(
         "/api/v1/auth/registro",

@@ -39,6 +39,35 @@ fastapi dev app/main.py
 La documentación está en `/docs` (solo fuera de producción), la comprobación de
 salud en `/api/v1/health` y todas las rutas de negocio tienen el prefijo `/api/v1`.
 
+## Despliegue en Render
+
+El archivo `render.yaml` configura un servicio web FastAPI y una base Render
+PostgreSQL en el plan gratuito. Para desplegar:
+
+1. Sube los cambios del proyecto a la rama `main` de GitHub.
+2. En Render, selecciona **New > Blueprint**, conecta el repositorio
+   `Biblioteca_Desplegada` y aplica el Blueprint detectado.
+3. Revisa los recursos y confirma la creación. Render genera `SECRET_KEY` y
+   conecta la API a la URL interna de PostgreSQL.
+4. Cuando el despliegue termine, abre la URL `onrender.com` del servicio y
+   comprueba `/api/v1/health`. La documentación `/docs` está desactivada en
+   producción.
+
+El comando de inicio aplica `alembic upgrade head` antes de arrancar Uvicorn,
+porque Render no ofrece el comando pre-deploy en servicios gratuitos. Esto
+también puede ejecutar la migración en cada reinicio; Alembic aplica solo las
+revisiones pendientes.
+
+**Limitaciones del plan gratuito:** el servicio web se suspende tras 15 minutos
+sin tráfico y puede tardar alrededor de un minuto en reactivarse. La base
+PostgreSQL gratuita expira 30 días después de su creación; exporta los datos o
+actualiza el plan antes de esa fecha si necesitas conservarlos. No uses este
+plan para datos de producción.
+
+Para crear el primer administrador, ejecuta `python -m app.scripts.crear_admin`
+desde un entorno con acceso seguro a la URL externa de esa base. No publiques
+esa URL ni la contraseña de PostgreSQL.
+
 ## Administrador inicial
 
 Después de aplicar las migraciones, cree el primer administrador de forma
