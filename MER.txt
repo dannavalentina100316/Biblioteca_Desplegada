@@ -1,0 +1,67 @@
+  +-----------------------+              1 : N              +-----------------------+
+  |        AUTORES        |---------------------------------|        LIBROS         |
+  +-----------------------+                                 +-----------------------+
+  | * id (PK)             |                                 | * id (PK)             |
+  |   nombre              |                                 |   titulo              |
+  |   nacionalidad        |                                 |   isbn (Único)        |
+  |   anio_naci           |                                 |   anio_publicacion    |
+  +-----------------------+                                 |   ejemplares          |
+                                                            | * autor_id (FK)       |
+                                                            +-----------------------+
+                                                                        |
+                                                                        | 1
+                                                                        |
+                                                                        | N
+                                                            +-----------------------+
+                                                            |       PRESTAMOS       |
+                                                            +-----------------------+
+  +-----------------------+                                 | * id (PK)             |
+  |        SOCIOS         |                                 | * libro_id (FK)       |
+  +-----------------------+                                 | * socio_id (FK)       |
+  | * id (PK)             |              1 : N              |   fecha_prestamo      |
+  |   nombre              |---------------------------------|   fecha_limite        |
+  |   email (Único)       |                                 |   fecha_devolucion    |
+  |   telefono            |                                 |   multa               |
+  |   activo              |                                 +-----------------------+
+  |   fecha_alta          |
+  +-----------------------+
+
+                        RELACIÓN MUCHOS A MUCHOS (N : M)
+
+  +-----------------------+        N : M        +-----------------------+
+  |        LIBROS         |=====================|      CATEGORIAS       |
+  +-----------------------+                     +-----------------------+
+  | * id (PK)             |                     | * id (PK)             |
+  |   titulo              |                     |   nombre              |
+  |   ...                 |                     |   descripcion         |
+  +-----------------------+                     +-----------------------+
+              |                                             |
+              +----------------------+----------------------+
+                                     |
+                                     v
+                       Tabla Intermedia (Resolución N:M)
+                        +-------------------------------+
+                        |        LIBRO_CATEGORIA        |
+                        +-------------------------------+
+                        | * libro_id (PK, FK)           |
+                        | * categoria_id (PK, FK)       |
+                        +-------------------------------+
+
+AUTENTICACIÓN Y AUDITORÍA
+
+  +------------------------+             1 : N             +------------------------+
+  |       USUARIOS         |--------------------------------|    REFRESH_TOKENS      |
+  +------------------------+                                +------------------------+
+  | * id (PK)              |                                | * id (PK)              |
+  |   email (Único)        |                                |   jti (Único)          |
+  |   nombre               |                                | * usuario_id (FK)      |
+  |   password_hash        |                                |   expira_en            |
+  |   rol                  |                                |   revocado             |
+  |   activo               |                                +------------------------+
+  |   intentos_fallidos    |
+  |   bloqueado_hasta      |
+  |   socio_id (FK, Único) |---- 0..1 : 1 ---- SOCIOS
+  +------------------------+
+
+  PRESTAMOS incluye multa_pagada y registrado_por_id (FK a USUARIOS).
+  Los tokens completos nunca se almacenan; solo se persiste el jti del refresh.

@@ -1,0 +1,8 @@
+fastapi[standard]>=0.115
+SQLAlchemy>=2.0
+psycopg[binary]>=3.2
+alembic>=1.13
+pydantic-settings>=2.4
+PyJWT>=2.9
+pwdlib[argon2]>=0.2
+slowapi>=0.1.9
